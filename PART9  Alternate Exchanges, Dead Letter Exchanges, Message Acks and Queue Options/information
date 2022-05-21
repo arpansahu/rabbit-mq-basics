@@ -1,0 +1,19 @@
+alternate exchange: all the message which cannot be consumed from default exchange are routed to alternate exchnge
+dead ladder exchange: the main difference with alternate exchange is that it is used to send fial messages
+Message acks: even if messaghe fails it send auto acknowledgement after using auto_ack
+instead we can use basic_ack or basic_ack and build custom methods for handling both
+these both use delivery_tag
+
+basic_ack delivery_tag multiple
+basic_reject delivery_tag requeue
+basic_nack delivery_tag requeue, multiple
+
+Queue options:
+
+auto delete        flag                       delete queue when no longer needed
+auto expire        x-expires             delete queue after a period of unused time
+auto expire msg    x-message-ttl        expires msg if they sit on queue for long time
+max length queue   x-max-length         set max number of messages allowed on a queue
+exclusive          flag                 only allows one consumer at a time
+durable            flag                 sets the queue to survive server restarts
+dead-letter exchange   x-dead-letter-exchange

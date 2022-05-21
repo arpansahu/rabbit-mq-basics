@@ -1,0 +1,121 @@
+AMQP is the Internet Protocol for Business Messaging
+The Advanced Message Queuing Protocol (AMQP) is an open standard for passing business messages between applications or organizations.  It connects systems, feeds business processes with the information they need and reliably transmits onward the instructions that achieve their goals.
+
+Key Capabilities
+AMQP connects across:
+
+Organizations – applications in different organizations
+Technologies – applications on different platforms
+Time – systems don’t need to be available simultaneously
+Space – reliably operate at a distance, or over poor networks
+Business Case
+The main reasons an enterprise will chose AMQP over proprietary alternatives are:
+
+Realize the savings commoditization brings; remove vendor lock-in
+Connect applications on different platforms; choose the right platform for the job
+Connect to business partners using a full featured open standard; remove technical barriers to trade
+Position for innovations built upon the foundation of AMQP
+Key Features
+AMQP was designed with the following main characteristics as goals:
+
+Security
+Reliability
+Interoperability
+Standard
+Open
+
+Bottom Line
+The capable, commoditized, multi-vendor communications ecosystem which AMQP enables creates opportunities for commerce and innovation which can transform the way business is done on the Internet, and in the Cloud.
+AMQP is designed to solve real problems, completely.
+
+
+-----------------------------------------------------------------------
+everything stored in rabbitmq is stored in a data structure called as frames
+
+FRAMES:
+
+    a frame representation looks like
+
+    frame type (1 bytes) + channel (12  bytes) + size (in bytes) + frame_specific content(7 bytes) + frame end (1 bytes)
+
+    There are four types of frames:
+        Method Frame:
+            Frame specific Content: exchange_class(40 bytes) + method_on_exchange_class(10 bytes) agr1 arg2 .... arg9
+            ex: basic_consume and basic_publish
+        Content Header Frame:
+        Body Frame:
+        Heartbeat Frame:
+
+
+How does Client Connect to Broker Server
+step1: protocol header us send to server   (AMQP//)
+step2:
+    Server Rejects Protocol Header:
+        It writes a valid protocol header to open tcp socket and then closes the socket.
+    Server Accepts Protocol Header:
+        implements the protocol accordingly. In this case using Connection start methods frame
+        which connect to client.
+step3: the information in Connection start method frame, passes through SASL security mechanism and
+   then client approved the connection and starts Okay Method Frame.
+
+step4: after receiving connection start method frame server sends back connection secure method frame
+step5: then client passes back some data from SASL to server for some security mechanism.
+step6: Then server sends back connection tune method frame which include information like maximum
+    channels supported and maximum frame size supported and desired heart beat delay
+step7: Client should respond with connection tune method frame which contains details
+    again around the negotiated maximum channels, maximum frame size and heart beat delay
+step8: Now the connection open method frame is send to Broker
+step9: Server sends back connection open ok method frame, which signals to the client that connection is ready for use
+
+While Client and Broker do this communication process they mostly do synchronous request and response
+this changes during messages
+
+Similarly from declaring queues to binding queues and declaring exchanges
+client sends queue declare method frame and if its success the broker response back with queue declare ok methods frame
+else if its some error then rabbitmq will close the channel on which epc request was issued
+
+-----------------------------------------------------------------------------
+Working of Publishing messages from client to broker
+this requires more than method frames we also need content header frame or more or more body
+frames
+
+first client will send basic publish methods frame to indicate that is going to publish message.
+then it sends content header frame, such as size of message that is about to be published
+then it send one or more body frames which make  up the actual content of the message
+the no of body frames required depends on the size of itself and the maximum size of message supported by connection in rabbitmq
+
+------------------------------------------------------------------------------
+Receiving messages in RabbitMQ
+Two types :
+
+type1:
+    basic geth method : the messages in a queue by using a synchronous dialog that is designed for specific type of
+        applications where synchronous functionality is more important than performance.
+        The server will then respond either with a basic get ok method or basic get empty method depending on weather there is a
+        message in the queue question
+        This will then be followed by the message itself which again will contain a content header frame and a number of
+        body frames depending on the size of the message.
+        At last, client will send a basic ack method to acknowledge.
+
+        For sending another message. the same process will be repeated.
+
+    Note: the basic geth flow is not the ideal way of receiving messages from rabbitmq
+    We should consume and not get
+type2:
+    Consume method:
+        -client send basic consume method to the server which is a transient request for messages from a specific queue
+        -consumers last as long as the channel they were declared on or until the client cancels them.
+        -The broker then responds with a basic consume ok method frame.
+        -as and when messages arrive for that consumer on the broker, a consumer will send a basic deliver
+            method frame to the client this again will be followed by the content header frame and a number of body
+            frames
+            then client will send a basic acknowledgement if its okay unless
+
+        
+
+
+
+
+
+
+

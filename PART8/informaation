@@ -1,0 +1,12 @@
+contenType: allows consumer to determine media type json/application/pdf or something else which can decide content type of the message
+contentEncoding: gzip/compress/deflate
+timeStamp: to tell when message was published in miliseconds 1640030010
+appId: shopService
+userId Admin21
+DeliveryMode 0 (does not need to persist to disc)/1 (need to persists to disk before sending it)
+
+
+
+----speed vs reliability tradeoffs---
+
+no confirmations --> mandatory messages --> publisher confirms ----> transactions ---->persisted messages

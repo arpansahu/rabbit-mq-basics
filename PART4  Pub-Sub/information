@@ -1,0 +1,9 @@
+Here Exchanges are of four types:
+
+1. direct exchange
+2. topic exchange
+3. header exchange
+4. fan out exchange
+
+producer send message to fan out exchange and then it decides the interested queue to which it should be send
+

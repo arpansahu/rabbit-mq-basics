@@ -1,0 +1,17 @@
+For routing we use direct exchange
+
+Then there is concept of bindings (which are keys and tells which queue)
+multiple consumers can have same bindings
+these bindings are passed via producers along with the messages
+
+
+We can also route using Topix Exchange
+which does not used binding key but it  must be a list of words delimited by dots
+
+users.europe.payments
+users.europe.* (anything)
+users.europe.
+users.# (it can be anything or nothing doesnt matter after users.)
+
+* (star) can substitute for exactly one word.
+# (hash) can substitute for zero or more words.
